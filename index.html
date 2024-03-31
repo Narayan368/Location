@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto Location Finder</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 50px;
+    }
+
+    #coordinates {
+        margin: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        display: inline-block;
+    }
+
+    #copy-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+<h1>Your Location</h1>
+<div id="coordinates">Latitude: <span id="lat"></span>, Longitude: <span id="lon"></span></div>
+<button id="copy-btn">Copy Coordinates</button>
+
+<script>
+    window.onload = function() {
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser");
+            return;
+        }
+
+        function success(position) {
+            const latitude  = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            document.getElementById('lat').textContent = latitude.toFixed(6);
+            document.getElementById('lon').textContent = longitude.toFixed(6);
+        }
+
+        function error() {
+            alert("Unable to retrieve your location");
+        }
+
+        navigator.geolocation.getCurrentPosition(success, error);
+    };
+
+    document.getElementById('copy-btn').addEventListener('click', function() {
+        const lat = document.getElementById('lat').textContent;
+        const lon = document.getElementById('lon').textContent;
+        const coordsText = `Latitude: ${lat}, Longitude: ${lon}`;
+        navigator.clipboard.writeText(coordsText).then(() => {
+            alert('Coordinates copied to clipboard');
+        }).catch(err => {
+            alert('Error in copying text: ', err);
+        });
+    });
+</script>
+</body>
+</html>
