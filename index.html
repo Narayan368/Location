@@ -29,40 +29,34 @@
 <body>
 <h1>Your Location</h1>
 <div id="coordinates">Latitude: <span id="lat"></span>, Longitude: <span id="lon"></span></div>
-<button id="copy-btn">Copy Coordinates</button>
+<a id="location-link" href="https://www.example.com?lat=40.7128&lon=-74.0060">Click to Copy Coordinates</a>
 
 <script>
     window.onload = function() {
-        if (!navigator.geolocation) {
-            alert("Geolocation is not supported by your browser");
-            return;
-        }
-
-        function success(position) {
-            const latitude  = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            document.getElementById('lat').textContent = latitude.toFixed(6);
-            document.getElementById('lon').textContent = longitude.toFixed(6);
-        }
-
-        function error() {
-            alert("Unable to retrieve your location");
-        }
-
-        navigator.geolocation.getCurrentPosition(success, error);
-    };
-
-    document.getElementById('copy-btn').addEventListener('click', function() {
-        const lat = document.getElementById('lat').textContent;
-        const lon = document.getElementById('lon').textContent;
-        const coordsText = `Latitude: ${lat}, Longitude: ${lon}`;
-        navigator.clipboard.writeText(coordsText).then(() => {
-            alert('Coordinates copied to clipboard');
-        }).catch(err => {
-            alert('Error in copying text: ', err);
+        const locationLink = document.getElementById('location-link');
+        locationLink.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the link from redirecting
+            const url = new URL(locationLink.href);
+            const latitude = url.searchParams.get('lat');
+            const longitude = url.searchParams.get('lon');
+            if (latitude && longitude) {
+                document.getElementById('lat').textContent = latitude;
+                document.getElementById('lon').textContent = longitude;
+                copyCoordinates(latitude, longitude);
+            } else {
+                alert('Latitude and longitude not found in the link.');
+            }
         });
-    });
+
+        function copyCoordinates(latitude, longitude) {
+            const coordsText = `Latitude: ${latitude}, Longitude: ${longitude}`;
+            navigator.clipboard.writeText(coordsText).then(() => {
+                alert('Coordinates copied to clipboard');
+            }).catch(err => {
+                alert('Error in copying text: ', err);
+            });
+        }
+    };
 </script>
 </body>
 </html>
